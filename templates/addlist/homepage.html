@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assignment Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col min-h-screen bg-rose-50 text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="bg-rose-500 text-white px-6 py-4 flex justify-between items-center shadow-md">
+    <div class="text-2xl font-bold">Assignment Tracker</div>
+    <div class="space-x-6 text-lg">
+      <a href="{% url 'home' %}" class="hover:underline">Home</a>
+      <a href="{% url 'about' %}" class="hover:underline">About</a>
+      <a href="{% url 'assignments_list' %}" class="hover:underline">Assignment</a>
+      <a href="{% url 'login' %}" class="hover:underline">Login</a>
+      <a href="{% url 'register' %}" class="hover:underline">Register</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-grow flex flex-col justify-center items-center px-4 py-16">
+    <div class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+
+      <!-- Left Side: Text & Buttons -->
+      <div class="text-center md:text-left">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-rose-700">Welcome to Assignment Tracker!</h1>
+        <p class="text-lg text-gray-700 mb-4">
+          Say goodbye to missed deadlines. Your smart assistant for managing homework, projects, and tasks is here.
+        </p>
+        <p class="text-lg text-gray-700 mb-8">
+          Built for students and busy people who want to stay ahead—effortlessly.
+        </p>
+        <div class="flex flex-col md:flex-row gap-4 justify-center md:justify-start">
+          <!-- Adjusted Button Sizes, Font Weight & Size -->
+          <a href="{% url 'add_assignment' %}" class="bg-rose-500 text-white px-6 py-3 rounded-lg shadow hover:bg-rose-600 transition w-52 font-bold text-lg">Add Assignment</a>
+          <a href="{% url 'assignments_list' %}" class="bg-amber-500 text-white px-6 py-3 rounded-lg shadow hover:bg-amber-600 transition w-52 font-bold text-lg">View Assignments</a>
+          <a href="{% url 'approaching_duedates' %}" class="bg-lime-500 text-white px-6 py-3 rounded-lg shadow hover:bg-lime-600 transition w-52 font-bold text-lg">Due Soon</a>
+        </div>
+      </div>
+
+      <!-- Right Side: Emojis/Illustration -->
+      <div class="flex flex-col items-center animate-bounce duration-1000">
+        <div class="text-[70px] md:text-[100px]">📚📝📆</div>
+        <p class="text-lg text-rose-600 font-semibold mt-2">Organize. Track. Succeed.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-rose-500 text-white text-center py-4">
+    <p>&copy; 2025 Assignment Tracker. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

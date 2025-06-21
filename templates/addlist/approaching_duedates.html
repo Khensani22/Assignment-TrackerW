@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Approaching Due Dates</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg-color: #fff1f2;
+      --text-color: #000;
+      --accent-color: #d63384;
+      --btn-hover: #c2186a;
+      --highlight-color: #fff3cd;
+      --urgent-color: #ffe5e5;
+      --table-header: #f9f9f9;
+      --small-text: #777;
+    }
+
+    body.dark-mode {
+      --bg-color: #121212;
+      --text-color: #eee;
+      --accent-color: #ff79c6;
+      --btn-hover: #ff4fa1;
+      --highlight-color: #333d1a;
+      --urgent-color: #663333;
+      --table-header: #1e1e1e;
+      --small-text: #aaa;
+    }
+
+    * {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      font-size: 100%;
+    }
+
+    h2 {
+      font-size: 26px;
+      margin-bottom: 30px;
+      color: var(--accent-color);
+      animation: fadeIn 1s ease-in;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .clock-icon {
+      font-size: 24px;
+      animation: tickPulse 1s infinite ease-in-out;
+    }
+
+    @keyframes tickPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.6; }
+    }
+
+    .animated-message {
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: var(--text-color);
+      animation: bounceIn 1.5s ease-out;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin: 30px auto 20px auto;
+      max-width: 80%;
+    }
+
+    .btn, .add-btn, .back-btn {
+      background-color: var(--accent-color);
+      color: white;
+      font-size: 16px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      display: inline-block;
+      width: auto;
+    }
+
+    .btn:hover, .add-btn:hover, .back-btn:hover {
+      background-color: var(--btn-hover);
+    }
+
+    .sr-only {
+      position: absolute;
+      left: -9999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 1em;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    body.dark-mode th, body.dark-mode td {
+      border-color: #444;
+    }
+
+    th {
+      background-color: var(--table-header);
+      color: var(--text-color);
+    }
+
+    .urgent {
+      background-color: var(--urgent-color);
+      font-weight: bold;
+    }
+
+    .highlight {
+      background-color: var(--highlight-color);
+      border-left: 5px solid #ffc107;
+    }
+
+    tr {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+
+    tr:nth-child(even) {
+      animation-delay: 0.1s;
+    }
+
+    tr:nth-child(odd) {
+      animation-delay: 0.2s;
+    }
+
+    .small-text {
+      font-size: 12px;
+      color: var(--small-text);
+      margin-top: 4px;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: translateY(-30px); }
+      60% { opacity: 1; transform: translateY(10px); }
+      100% { transform: translateY(0); }
+    }
+
+    .quote-box {
+      margin-top: 40px;
+      margin-bottom: 30px;
+      padding: 20px;
+      border-left: 5px solid var(--accent-color);
+      background-color: var(--table-header);
+      color: var(--text-color);
+      font-style: italic;
+      animation: fadeIn 1s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="bg-rose-500 text-white px-6 py-4 flex justify-between items-center shadow-md w-full">
+    <div class="text-2xl font-bold">Assignment Tracker</div>
+    <div class="space-x-6 text-lg">
+      <a href="{% url 'home' %}" class="hover:underline">Home</a>
+      <a href="{% url 'about' %}" class="hover:underline">About</a>
+      <a href="{% url 'assignments_list' %}" class="hover:underline">Assignment</a>
+      {% if user.is_authenticated %}
+      <a href="{% url 'home' %}" class="nav-link">Logout</a>
+      {% else %}
+      <a href="{% url 'login' %}" class="nav-link">Login</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <a href="#main-content" class="sr-only sr-only-focusable">Skip to content</a>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+    <button class="btn" onclick="changeFontSize(1)">A+</button>
+    <button class="btn" onclick="changeFontSize(-1)">A-</button>
+  </div>
+
+  <!-- Content Container -->
+  <div style="
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+  " class="p-8 rounded-2xl max-w-6xl mx-auto mt-6 dark:border-gray-700 dark:shadow-2xl">
+
+    <main id="main-content">
+      <div class="text-xl font-semibold mb-6">
+        Welcome, {{ user.first_name|default:user.username }}
+      </div>
+
+      <h2 id="approaching-heading">
+        <span class="clock-icon">⏰</span> Approaching Due Dates (Next 7 Days)
+      </h2>
+
+      <div class="animated-message">
+        Keep track of what's coming up next — never miss a deadline!
+      </div>
+
+      <table aria-labelledby="approaching-heading" role="table">
+        <thead>
+          <tr>
+            <th scope="col">No.</th>
+            <th scope="col">Module</th>
+            <th scope="col">Assignment</th>
+            <th scope="col">Due Date</th>
+            <th scope="col">Status</th>
+            <th scope="col">Progress</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for assignment in approaching_assignments %}
+          <tr class="{% if assignment.is_nearest %}highlight{% endif %}{% if assignment.is_urgent %} urgent{% endif %}">
+            <td>{{ forloop.counter }}</td>
+            <th scope="row">{{ assignment.module_name }}</th>
+            <td>{{ assignment.assignment_name }}</td>
+            <td>{{ assignment.due_date|date:"d/m/Y" }}</td>
+            <td>{{ assignment.status }}</td>
+            <td>
+              <div aria-hidden="true" style="font-family: monospace;">
+                {% with complete=assignment.progress_percent|floatformat:"0" %}
+                {% for i in "1234567890" %}
+                {% if forloop.counter <= complete|divisibleby:10 %}
+                🟩
+                {% else %}
+                ⬜
+                {% endif %}
+                {% endfor %}
+                {% endwith %}
+              </div>
+              <span class="sr-only">{{ assignment.progress_percent }} percent complete</span>
+              <div class="small-text">{{ assignment.progress_percent }}% - {{ assignment.days_left }} day(s) left</div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6">No assignments are due in the next 7 days.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Daily Quote -->
+      <div class="quote-box" id="daily-quote">
+        Loading your daily motivation...
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 20px;">
+        <a href="{% url 'add_assignment' %}" class="add-btn" style="padding: 12px 24px; width: 220px; text-align: center;">Add Assignment</a>
+        <a href="{% url 'assignments_list' %}" class="back-btn" style="padding: 12px 24px; width: 220px; text-align: center;">Back to Assignments</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    function changeFontSize(delta) {
+      const currentSize = parseFloat(getComputedStyle(document.body).fontSize);
+      const newSize = currentSize + delta;
+      if (newSize >= 12 && newSize <= 24) {
+        document.body.style.fontSize = newSize + 'px';
+      }
+    }
+
+    const quotes = [
+      "Sunday: Plan well, rest well, and rise ready.",
+      "Monday: Start the week strong. Your goals won’t chase themselves!",
+      "Tuesday: Progress, not perfection. Keep going.",
+      "Wednesday: Halfway there! Stay focused and keep grinding.",
+      "Thursday: The effort you put in today creates the future you want.",
+      "Friday: Finish strong — the weekend is your reward!",
+      "Saturday: Reflect, recharge, and prepare to dominate."
+    ];
+    const today = new Date().getDay();
+    document.getElementById("daily-quote").innerText = quotes[today];
+  </script>
+</body>
+</html>

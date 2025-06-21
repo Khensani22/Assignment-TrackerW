@@ -1,0 +1,273 @@
+<nav class="bg-rose-500 text-white px-6 py-4 flex justify-between items-center shadow-md">
+    <div class="text-2xl font-bold">Assignment Tracker</div>
+    <div class="space-x-6 text-lg">
+      <a href="{% url 'home' %}" class="hover:underline">Home</a>
+      <a href="{% url 'about' %}" class="hover:underline">About</a>
+      <a href="{% url 'assignments_list' %}" class="hover:underline">Assignment</a>
+      {% if user.is_authenticated %}
+      <!-- Logout Link -->
+      <a href="{% url 'home' %}" class="nav-link">Logout</a>
+  {% else %}
+      <a href="{% url 'login' %}" class="nav-link">Login</a>
+  {% endif %}
+
+    </div>
+  </nav>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if form.instance.pk %}Update{% else %}Add{% endif %} Assignment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff1f2;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        
+
+        .container {
+    width: 100%;
+    max-width: 500px;
+    margin: 80px auto 50px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers content vertically */
+    justify-content: center; /* Centers content horizontally */
+}
+        h2 {
+            text-align: center;
+            font-size: 30px;
+            margin-bottom: 20px;
+            color: #be185d;
+            font-weight: bold;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 16px;
+            color: #4b5563;
+        }
+
+        /* Updated input, textarea, and select styling */
+        input, textarea, select {
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #be123c; /* Tailwind's rose-700 */
+            border-radius: 0.5rem; /* rounded-md */
+            outline: none;
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #be123c;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(190, 18, 60, 0.4); /* soft rose-700 glow */
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            min-width: 120px;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .save-btn {
+            background-color: #d63384;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background-color:  #d63384;
+        }
+
+        .undo-btn {
+            background-color: #6b7280;
+            color: white;
+        }
+
+        .undo-btn:hover {
+            background-color: #4b5563;
+        }
+
+        .view-btn {
+            background-color: #d63384;
+            color: white;
+            display: block;
+            width: fit-content;
+            margin: 20px auto 40px;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .view-btn:hover {
+            background-color: #d63384;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin: 0 15px;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+   
+
+    <!-- Container -->
+    <div class="container">
+        <h2>{% if form.instance.pk %}Update{% else %}Add{% endif %} Assignment</h2>
+        <form method="POST" id="assignment-form">
+            {% csrf_token %}
+
+            <label>Module name:</label>
+            {{ form.module_name }}
+            {% if form.module_name.errors %}
+                <div class="error">{{ form.module_name.errors.0 }}</div>
+            {% endif %}
+
+            <label>Assignment name:</label>
+            {{ form.assignment_name }}
+            {% if form.assignment_name.errors %}
+                <div class="error">{{ form.assignment_name.errors.0 }}</div>
+            {% endif %}
+
+            <label>Description:</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <div class="error">{{ form.description.errors.0 }}</div>
+            {% endif %}
+
+            <label>Due date:</label>
+            <input type="date" name="due_date" id="due_date" required placeholder="Format: dd/mm/yyyy">
+            {% if form.due_date.errors %}
+                <div class="error">{{ form.due_date.errors.0 }}</div>
+            {% endif %}
+
+            <label>Status:</label>
+            {{ form.status }}
+            {% if form.status.errors %}
+                <div class="error">{{ form.status.errors.0 }}</div>
+            {% endif %}
+
+            <div class="button-container">
+                <button type="button" class="save-btn" id="save-btn">Save</button>
+                <button type="reset" class="undo-btn" id="reset-btn">Undo</button>
+            </div>
+        </form>
+        <br>
+        <br>
+        <a href="{% url 'assignments_list' %}" class="view-btn">View Assignments</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const formData = JSON.parse(localStorage.getItem('assignmentFormData'));
+            if (formData) {
+                document.querySelector('input[name="module_name"]').value = formData.module_name || '';
+                document.querySelector('input[name="assignment_name"]').value = formData.assignment_name || '';
+                document.querySelector('textarea[name="description"]').value = formData.description || '';
+                document.querySelector('input[name="due_date"]').value = formData.due_date || '';
+                document.querySelector('select[name="status"]').value = formData.status || '';
+            }
+
+            const dueDateInput = document.querySelector('input[name="due_date"]');
+            if (dueDateInput) {
+                dueDateInput.placeholder = "Format: dd/mm/yyyy";
+
+                dueDateInput.addEventListener('blur', () => {
+                    const inputDate = dueDateInput.value;
+                    const dateParts = inputDate.split('-');
+
+                    if (dateParts.length === 3) {
+                        const userDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+                        const today = new Date();
+                        const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+                        if (userDate < todayOnly) {
+                            alert("You cannot select a past date.");
+                            dueDateInput.value = '';
+                        }
+                    }
+                });
+            }
+
+            const descInput = document.querySelector('textarea[name="description"]');
+            if (descInput) {
+                descInput.placeholder = "What the assignment is about...";
+            }
+        });
+
+        document.getElementById('assignment-form').addEventListener('input', () => {
+            const formData = {
+                module_name: document.querySelector('input[name="module_name"]')?.value || '',
+                assignment_name: document.querySelector('input[name="assignment_name"]')?.value || '',
+                description: document.querySelector('textarea[name="description"]')?.value || '',
+                due_date: document.querySelector('input[name="due_date"]')?.value || '',
+                status: document.querySelector('select[name="status"]')?.value || ''
+            };
+            localStorage.setItem('assignmentFormData', JSON.stringify(formData));
+        });
+
+        document.getElementById('save-btn').addEventListener('click', function(event) {
+            const isConfirmed = confirm("Are you sure you want to save this assignment?");
+            if (!isConfirmed) {
+                event.preventDefault();
+            } else {
+                localStorage.removeItem('assignmentFormData');
+                document.getElementById('assignment-form').submit();
+            }
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            localStorage.removeItem('assignmentFormData');
+        });
+    </script>
+</body>
+</html>

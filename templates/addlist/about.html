@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About - Assignment Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Add Animate.css CDN for animations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body class="flex flex-col min-h-screen bg-rose-50 text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="bg-rose-500 text-white px-6 py-4 flex justify-between items-center shadow-md">
+    <div class="text-2xl font-bold">Assignment Tracker</div>
+    <div class="space-x-6 text-lg">
+      <a href="{% url 'home' %}" class="hover:underline">Home</a>
+      <a href="{% url 'about' %}" class="hover:underline">About</a>
+      <a href="{% url 'add_assignment' %}" class="hover:underline">Assignment</a>
+      <a href="{% url 'login' %}" class="hover:underline">Login</a>
+      <a href="{% url 'register' %}" class="hover:underline">Register</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-grow flex flex-col justify-center items-center px-4 py-16">
+    <div class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+
+      <!-- Left Side: Text & Description -->
+      <div class="text-center md:text-left">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-rose-700 animate__animated animate__fadeIn">About Assignment Tracker</h1>
+        <p class="text-lg text-gray-700 mb-4 animate__animated animate__fadeIn animate__delay-1s">
+          Track, manage, and stay ahead of all your school assignments — effortlessly!
+        </p>
+        <p class="text-lg text-gray-700 mb-8 animate__animated animate__fadeIn animate__delay-2s">
+          This project helps you track, organize, and stay ahead of your school tasks. This platform allows students to:
+        </p>
+
+        <ul class="text-lg text-gray-700 mb-6 list-inside list-disc animate__animated animate__fadeIn animate__delay-3s">
+          <li>📚 View a list of all assignments</li>
+          <li>📝 Add new assignments</li>
+          <li>⏰ View assignments that are due soon</li>
+          <li>✅ Track progress of assignments</li>
+        </ul>
+
+        <p class="text-lg text-gray-700 animate__animated animate__fadeIn animate__delay-4s">
+          It has been designed with a focus on simplicity, usability, and flexibility, so you can stay on top of all your deadlines.
+        </p>
+      </div>
+
+      <!-- Right Side: Continuous Bouncing Emoji Animation -->
+      <div class="text-center">
+        <div class="space-y-4">
+          <div class="text-4xl text-rose-600 animate__animated animate__bounce animate__infinite animate__delay-1s">
+            📚
+            <p class="text-lg text-gray-700 mt-2">View a list of all assignments</p>
+          </div>
+          <div class="text-4xl text-amber-500 animate__animated animate__bounce animate__infinite animate__delay-2s">
+            📝
+            <p class="text-lg text-gray-700 mt-2">Add new assignments</p>
+          </div>
+          <div class="text-4xl text-lime-500 animate__animated animate__bounce animate__infinite animate__delay-3s">
+            ⏰
+            <p class="text-lg text-gray-700 mt-2">View assignments that are due soon</p>
+          </div>
+          <div class="text-4xl text-green-500 animate__animated animate__bounce animate__infinite animate__delay-4s">
+            ✅
+            <p class="text-lg text-gray-700 mt-2">Track progress of assignments</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-rose-500 text-white text-center py-4">
+    <p>&copy; 2025 Assignment Tracker. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
+
+
